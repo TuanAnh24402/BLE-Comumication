@@ -143,10 +143,9 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
       app_assert_status(sc);
       break;
 
-    ///////////////////////////////////////////////////////////////////////////
-    // Add additional event handlers here as your application requires!      //
-    ///////////////////////////////////////////////////////////////////////////
+    case sl_bt_evt_gatt_server_attribute_value_id:
 
+      break;
     // -------------------------------
     // Default event handler.
     default:

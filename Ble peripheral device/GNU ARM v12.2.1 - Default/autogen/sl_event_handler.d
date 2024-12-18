@@ -80,6 +80,12 @@ autogen/sl_event_handler.o: ../autogen/sl_event_handler.c \
  D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\platform\radio\rail_lib\plugin\pa-conversions/pa_curve_types_efr32.h \
  D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\platform\radio\rail_lib\plugin\rail_util_power_manager_init/sl_rail_util_power_manager_init.h \
  D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\platform\radio\rail_lib\plugin\rail_util_pti/sl_rail_util_pti.h \
+ D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\platform\bootloader\api/btl_interface.h \
+ D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\platform\bootloader\api/btl_errorcode.h \
+ D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\platform\bootloader\api/btl_reset_info.h \
+ D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\platform\bootloader\api/application_properties.h \
+ D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\platform\bootloader\api/btl_interface_parser.h \
+ D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\platform\bootloader\api/btl_interface_storage.h \
  D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\hardware\board\inc/sl_board_control.h \
  D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\platform\service\sleeptimer\inc/sl_sleeptimer.h \
  D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\app\common\util\app_log/app_log.h \
@@ -98,6 +104,7 @@ autogen/sl_event_handler.o: ../autogen/sl_event_handler.c \
  D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\platform\emlib\inc/em_ldma.h \
  D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\config/dmadrv_config.h \
  D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\config/app_log_config.h \
+ D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\app\common\util\app_timer/app_timer.h \
  ../autogen/sl_bluetooth.h \
  D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\config/sl_bluetooth_config.h \
  D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\config/sl_bluetooth_connection_config.h \
@@ -270,6 +277,12 @@ D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\platfo
 D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\platform\radio\rail_lib\plugin\pa-conversions/pa_curve_types_efr32.h:
 D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\platform\radio\rail_lib\plugin\rail_util_power_manager_init/sl_rail_util_power_manager_init.h:
 D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\platform\radio\rail_lib\plugin\rail_util_pti/sl_rail_util_pti.h:
+D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\platform\bootloader\api/btl_interface.h:
+D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\platform\bootloader\api/btl_errorcode.h:
+D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\platform\bootloader\api/btl_reset_info.h:
+D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\platform\bootloader\api/application_properties.h:
+D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\platform\bootloader\api/btl_interface_parser.h:
+D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\platform\bootloader\api/btl_interface_storage.h:
 D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\hardware\board\inc/sl_board_control.h:
 D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\platform\service\sleeptimer\inc/sl_sleeptimer.h:
 D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\app\common\util\app_log/app_log.h:
@@ -288,6 +301,7 @@ D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\platfo
 D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\platform\emlib\inc/em_ldma.h:
 D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\config/dmadrv_config.h:
 D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\config/app_log_config.h:
+D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\app\common\util\app_timer/app_timer.h:
 ../autogen/sl_bluetooth.h:
 D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\config/sl_bluetooth_config.h:
 D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\config/sl_bluetooth_connection_config.h:

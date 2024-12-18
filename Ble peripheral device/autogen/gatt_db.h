@@ -23,6 +23,8 @@ extern const sli_bt_gattdb_t gattdb;
 #define gattdb_main_service                   25
 #define gattdb_led_control                    27
 #define gattdb_fan_control                    29
+#define gattdb_ota                            30
+#define gattdb_ota_control                    32
 
 
 #endif // __GATT_DB_H

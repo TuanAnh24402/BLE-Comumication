@@ -55,7 +55,6 @@
 
 
 // The advertising set handle allocated from Bluetooth stack.
-static uint8_t advertising_set_handle = 0xff;
 
 static conn_state_t state;
 static sl_status_t sc;
@@ -169,7 +168,7 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
                                   evt->data.evt_scanner_legacy_advertisement_report.address_type,
                                   sl_bt_gap_phy_1m,
                                   &conn[0].handle);
-            state = opening;
+//            state = opening;
             break;
           } else if (strcmp(name, TARGET_NAME_2) == 0) {
             app_log("Found server 2, connecting..\n");
@@ -179,7 +178,7 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
                                   evt->data.evt_scanner_legacy_advertisement_report.address_type,
                                   sl_bt_gap_phy_1m,
                                   &conn[1].handle);
-            state = opening;
+//            state = opening;
             break;
           }
         }
@@ -194,14 +193,42 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
     case sl_bt_evt_connection_opened_id:
       uint8_t current_connection = evt->data.evt_connection_opened.connection;
       bd_addr connection_address = evt->data.evt_connection_opened.address;
+
       if (current_connection == conn[0].handle) {
           bd_addr_to_string(&connection_address, conn[0].device.address, 18);
           app_log("Connected to server 1\n");
+          live_connections++;
       } else {
           bd_addr_to_string(&connection_address, conn[1].device.address, 18);
           app_log("Connected to server 2\n");
+          live_connections++;
       }
       state = connecting;
+      if (state == connecting) {
+        if (live_connections < 2) {
+          app_log("Continue scanning\n");
+          sc = sl_bt_scanner_start(sl_bt_scanner_scan_phy_1m,
+                                   sl_bt_scanner_discover_generic);
+          app_assert_status(sc);
+          state = scanning;
+        } else {
+          sl_bt_scanner_stop();
+          sc = sl_bt_gatt_discover_primary_services_by_uuid(conn[0].handle,
+                                                            sizeof(service_uuid),
+                                                            (const uint8_t*) service_uuid);
+          if (sc == SL_STATUS_INVALID_HANDLE) {
+            // Failed to open connection, res-tart scanning
+            app_log_warning("Primary service discovery failed with invalid handle, dropping client\n");
+            sc = sl_bt_scanner_start(sl_bt_gap_phy_1m, sl_bt_scanner_discover_generic);
+            app_assert_status(sc);
+            state = scanning;
+            break;
+          } else {
+            app_assert_status(sc);
+          }
+          state = discover_services;
+        }
+      }
 
       break;
     // -------------------------------
@@ -266,62 +293,28 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
         state = discover_characteristics;
         break;
       }
-      if (state == connecting) {
-        live_connections++;
-        if (res == SL_STATUS_OK) {
-          if (connection == conn[0].handle) {
-            conn[0].connected_ok = true;
-            app_log("Server 1 connected\n");
-          } else if (connection == conn[1].handle) {
-            conn[1].connected_ok = true;
-            app_log("Server 2 connected\n");
-          }
-        } else {
-          if (connection == conn[0].handle) {
-            conn[0].connected_ok = false;
-            app_log("Can not connected to server 1\n");
-          } else if (connection == conn[1].handle) {
-            conn[1].connected_ok = false;
-            app_log("Can not connected to server 2\n");
-          }
-        }
-        if (live_connections < 2) {
-          app_log("Continue scanning\n");
-          sc = sl_bt_scanner_start(sl_bt_scanner_scan_phy_1m,
-                                   sl_bt_scanner_discover_generic);
-          app_assert_status(sc);
-          state = scanning;
-        } else {
-          sl_bt_scanner_stop();
-          sc = sl_bt_gatt_discover_primary_services_by_uuid(conn[0].handle,
-                                                            sizeof(service_uuid),
-                                                            (const uint8_t*) service_uuid);
-          if (sc == SL_STATUS_INVALID_HANDLE) {
-            // Failed to open connection, res-tart scanning
-            app_log_warning("Primary service discovery failed with invalid handle, dropping client\n");
-            sc = sl_bt_scanner_start(sl_bt_gap_phy_1m, sl_bt_scanner_discover_generic);
-            app_assert_status(sc);
-            state = scanning;
-            break;
-          } else {
-            app_assert_status(sc);
-          }
-          state = discover_services;
-        }
-      }
       break;
     // -------------------------------
     // This event indicates that a connection was closed.
     case sl_bt_evt_connection_closed_id:
-      // Generate data for advertising
-      sc = sl_bt_legacy_advertiser_generate_data(advertising_set_handle,
-                                                 sl_bt_advertiser_general_discoverable);
-      app_assert_status(sc);
+      if (evt->data.evt_connection_closed.connection == conn[0].handle) {
+        app_log("Connection 1 closed, restarting scan...\n");
+        conn[0].connected_ok = false;
+      } else if (evt->data.evt_connection_closed.connection == conn[1].handle) {
+        app_log("Connection 2 closed, restarting scan...\n");
+        conn[1].connected_ok = false;
+      }
+      // Update connection count
+      if (live_connections > 0) {
+        live_connections--;
+      }
+      // Keep scanning if connection less than 2
+      if (live_connections < 2) {
+        sc = sl_bt_scanner_start(sl_bt_scanner_scan_phy_1m, sl_bt_scanner_discover_generic);
+        check_status("Restarting discovery", sc);
+        state = scanning;
+      }
 
-      // Restart advertising after client has disconnected.
-      sc = sl_bt_legacy_advertiser_start(advertising_set_handle,
-                                         sl_bt_legacy_advertiser_connectable);
-      app_assert_status(sc);
       break;
 
     ///////////////////////////////////////////////////////////////////////////

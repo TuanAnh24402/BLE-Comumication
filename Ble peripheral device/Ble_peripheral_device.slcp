@@ -38,12 +38,14 @@ component:
 - {id: bluetooth_feature_sm}
 - {id: bluetooth_feature_system}
 - {id: bluetooth_stack}
+- {id: bootloader_interface}
 - {id: brd4001a}
 - {id: brd4311a_a01}
 - {id: bt_post_build}
 - {id: component_catalog}
 - {id: gatt_configuration}
 - {id: gatt_service_device_information}
+- {id: in_place_ota_dfu}
 - instance: [vcom]
   id: iostream_usart
 - {id: mpu}

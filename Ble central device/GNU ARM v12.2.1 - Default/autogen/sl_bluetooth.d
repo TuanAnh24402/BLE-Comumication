@@ -24,6 +24,8 @@ autogen/sl_bluetooth.o: ../autogen/sl_bluetooth.c \
  D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\platform\common\inc/sl_assert.h \
  D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\protocol\bluetooth\inc/sl_bt_stack_init.h \
  ../autogen/sl_component_catalog.h \
+ D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\app\bluetooth\common\in_place_ota_dfu/sl_bt_in_place_ota_dfu.h \
+ D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\config/sl_bt_in_place_ota_dfu_config.h \
  D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\app\bluetooth\common\gatt_service_device_information/sl_gatt_service_device_information.h \
  D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\platform\Device\SiliconLabs\BGM22\Include/em_device.h \
  D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\platform\Device\SiliconLabs\BGM22\Include/bgm220pc22hna.h \
@@ -94,6 +96,8 @@ D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\protocol\
 D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\platform\common\inc/sl_assert.h:
 D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\protocol\bluetooth\inc/sl_bt_stack_init.h:
 ../autogen/sl_component_catalog.h:
+D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\app\bluetooth\common\in_place_ota_dfu/sl_bt_in_place_ota_dfu.h:
+D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\config/sl_bt_in_place_ota_dfu_config.h:
 D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\app\bluetooth\common\gatt_service_device_information/sl_gatt_service_device_information.h:
 D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\platform\Device\SiliconLabs\BGM22\Include/em_device.h:
 D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\platform\Device\SiliconLabs\BGM22\Include/bgm220pc22hna.h:

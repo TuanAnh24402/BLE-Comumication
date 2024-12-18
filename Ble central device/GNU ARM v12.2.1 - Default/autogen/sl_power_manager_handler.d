@@ -58,6 +58,7 @@ autogen/sl_power_manager_handler.o: ../autogen/sl_power_manager_handler.c \
  D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\platform\service\sleeptimer\inc/sl_sleeptimer.h \
  D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\platform\common\inc/sl_enum.h \
  D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\platform\emlib\inc/em_core_generic.h \
+ D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\app\common\util\app_timer/app_timer.h \
  ../autogen/sl_bluetooth.h \
  D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\config/sl_bluetooth_config.h \
  D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\config/sl_bluetooth_connection_config.h \
@@ -135,6 +136,7 @@ D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\platform\
 D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\platform\service\sleeptimer\inc/sl_sleeptimer.h:
 D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\platform\common\inc/sl_enum.h:
 D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\platform\emlib\inc/em_core_generic.h:
+D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\app\common\util\app_timer/app_timer.h:
 ../autogen/sl_bluetooth.h:
 D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\config/sl_bluetooth_config.h:
 D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\config/sl_bluetooth_connection_config.h:

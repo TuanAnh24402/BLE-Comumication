@@ -46,7 +46,8 @@ gecko_sdk_4.4.4/platform/Device/SiliconLabs/BGM22/Source/startup_bgm22.o: \
  D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\platform\Device\SiliconLabs\BGM22\Include/bgm22_prs_signals.h \
  D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\platform\Device\SiliconLabs\BGM22\Include/bgm22_dma_descriptor.h \
  D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\platform\Device\SiliconLabs\BGM22\Include/bgm22_ldmaxbar_defines.h \
- D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\autogen/sl_component_catalog.h
+ D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\autogen/sl_component_catalog.h \
+ D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\platform\bootloader/api/application_properties.h
 D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\platform\common\toolchain\inc/sl_gcc_preinclude.h:
 D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\platform\Device\SiliconLabs\BGM22\Include/em_device.h:
 D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\platform\Device\SiliconLabs\BGM22\Include/bgm220pc22hna.h:
@@ -94,3 +95,4 @@ D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\platform\
 D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\platform\Device\SiliconLabs\BGM22\Include/bgm22_dma_descriptor.h:
 D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\platform\Device\SiliconLabs\BGM22\Include/bgm22_ldmaxbar_defines.h:
 D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\autogen/sl_component_catalog.h:
+D:\Code\OJT_code\BLE-Comumication\Ble\ central\ device\gecko_sdk_4.4.4\platform\bootloader/api/application_properties.h:

@@ -2,6 +2,7 @@
 #include "em_core.h"
 #include "sl_power_manager.h"
 #include "sl_sleeptimer.h"
+#include "app_timer.h"
 #include "sl_bluetooth.h"
 #include "sl_iostream_init_usart_instances.h"
 
@@ -54,6 +55,9 @@ __WEAK sl_power_manager_on_isr_exit_t app_sleep_on_isr_exit(void)
 bool sl_power_manager_is_ok_to_sleep(void)
 {
   bool ok_to_sleep = true;
+  if (sli_app_timer_is_ok_to_sleep() == false) {
+    ok_to_sleep = false;
+  }
   if (sli_bt_is_ok_to_sleep() == false) {
     ok_to_sleep = false;
   }
@@ -80,6 +84,13 @@ bool sl_power_manager_sleep_on_isr_exit(void)
   // the HFXO interrupt. 
   // Most of the time we want to get back to sleep until the next event occurs.
   sleep = sl_power_manager_is_latest_wakeup_internal();
+
+  answer = sli_app_timer_sleep_on_isr_exit();
+  if (answer == SL_POWER_MANAGER_WAKEUP) {
+    force_wakeup = true;
+  } else if (answer == SL_POWER_MANAGER_SLEEP) {
+    sleep = true;
+  }
 
   answer = sli_bt_sleep_on_isr_exit();
   if (answer == SL_POWER_MANAGER_WAKEUP) {

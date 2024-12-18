@@ -13,9 +13,11 @@
 #include "pa_conversions_efr32.h"
 #include "sl_rail_util_power_manager_init.h"
 #include "sl_rail_util_pti.h"
+#include "btl_interface.h"
 #include "sl_board_control.h"
 #include "sl_sleeptimer.h"
 #include "app_log.h"
+#include "app_timer.h"
 #include "sl_bluetooth.h"
 #include "sl_debug_swo.h"
 #include "sl_iostream_stdlib_config.h"
@@ -41,6 +43,7 @@ void sl_platform_init(void)
   sl_device_init_clocks();
   sl_device_init_emu();
   sl_board_init();
+  bootloader_init();
   nvm3_initDefault();
   sl_power_manager_init();
 }
@@ -83,6 +86,7 @@ void sl_platform_process_action(void)
 
 void sl_service_process_action(void)
 {
+  sli_app_timer_step();
 }
 
 void sl_stack_process_action(void)

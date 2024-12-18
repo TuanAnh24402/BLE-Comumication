@@ -89,6 +89,21 @@
           </folder>
         </folder>
       </folder>
+      <folder name="bootloader">
+        <folder name="app_properties">
+          <file name="app_properties.c" linked="false" uri="studio:/sdk/platform/bootloader/app_properties/app_properties.c"/>
+        </folder>
+        <folder name="api">
+          <file name="btl_interface.c" linked="false" uri="studio:/sdk/platform/bootloader/api/btl_interface.c"/>
+          <file name="btl_interface_storage.c" linked="false" uri="studio:/sdk/platform/bootloader/api/btl_interface_storage.c"/>
+          <file name="application_properties.h" linked="false" uri="studio:/sdk/platform/bootloader/api/application_properties.h"/>
+          <file name="btl_errorcode.h" linked="false" uri="studio:/sdk/platform/bootloader/api/btl_errorcode.h"/>
+          <file name="btl_interface.h" linked="false" uri="studio:/sdk/platform/bootloader/api/btl_interface.h"/>
+          <file name="btl_interface_parser.h" linked="false" uri="studio:/sdk/platform/bootloader/api/btl_interface_parser.h"/>
+          <file name="btl_interface_storage.h" linked="false" uri="studio:/sdk/platform/bootloader/api/btl_interface_storage.h"/>
+          <file name="btl_reset_info.h" linked="false" uri="studio:/sdk/platform/bootloader/api/btl_reset_info.h"/>
+        </folder>
+      </folder>
       <folder name="CMSIS">
         <folder name="Core">
           <folder name="Include">
@@ -531,6 +546,11 @@
             <file name="app_log.h" linked="false" uri="studio:/sdk/app/common/util/app_log/app_log.h"/>
             <file name="sl_app_log.h" linked="false" uri="studio:/sdk/app/common/util/app_log/sl_app_log.h"/>
           </folder>
+          <folder name="app_timer">
+            <file name="app_timer.c" linked="false" uri="studio:/sdk/app/common/util/app_timer/app_timer.c"/>
+            <file name="app_timer.h" linked="false" uri="studio:/sdk/app/common/util/app_timer/app_timer.h"/>
+            <file name="sl_simple_timer.h" linked="false" uri="studio:/sdk/app/common/util/app_timer/sl_simple_timer.h"/>
+          </folder>
         </folder>
       </folder>
       <folder name="bluetooth">
@@ -538,17 +558,17 @@
           <folder name="gatt_service_device_information">
             <file name="sl_gatt_service_device_information.h" linked="false" uri="studio:/sdk/app/bluetooth/common/gatt_service_device_information/sl_gatt_service_device_information.h"/>
           </folder>
+          <folder name="in_place_ota_dfu">
+            <file name="sl_bt_in_place_ota_dfu.c" linked="false" uri="studio:/sdk/app/bluetooth/common/in_place_ota_dfu/sl_bt_in_place_ota_dfu.c"/>
+            <file name="sl_bt_in_place_ota_dfu.h" linked="false" uri="studio:/sdk/app/bluetooth/common/in_place_ota_dfu/sl_bt_in_place_ota_dfu.h"/>
+          </folder>
         </folder>
       </folder>
     </folder>
     <folder name="protocol">
       <folder name="bluetooth">
-        <folder name="bgcommon">
-          <folder name="lib">
-            <file name="libbgcommon_efr32xg22_gcc_release.a" linked="false" uri="studio:/sdk/protocol/bluetooth/bgcommon/lib/libbgcommon_efr32xg22_gcc_release.a"/>
-          </folder>
-        </folder>
         <folder name="src">
+          <file name="sl_apploader_util_s2.c" linked="false" uri="studio:/sdk/protocol/bluetooth/src/sl_apploader_util_s2.c"/>
           <file name="sli_bt_advertiser_config.c" linked="false" uri="studio:/sdk/protocol/bluetooth/src/sli_bt_advertiser_config.c"/>
           <file name="sli_bt_connection_config.c" linked="false" uri="studio:/sdk/protocol/bluetooth/src/sli_bt_connection_config.c"/>
           <file name="sli_bt_dynamic_gattdb_config.c" linked="false" uri="studio:/sdk/protocol/bluetooth/src/sli_bt_dynamic_gattdb_config.c"/>
@@ -561,6 +581,7 @@
           <file name="sl_bt_stack_init.c" linked="false" uri="studio:/sdk/protocol/bluetooth/src/sl_bt_stack_init.c"/>
         </folder>
         <folder name="inc">
+          <file name="sl_apploader_util.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sl_apploader_util.h"/>
           <file name="sli_bt_config_defs.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sli_bt_config_defs.h"/>
           <file name="sli_bt_advertiser_config.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sli_bt_advertiser_config.h"/>
           <file name="sli_bt_connection_config.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sli_bt_connection_config.h"/>
@@ -580,6 +601,11 @@
           <file name="sl_bt_stack_init.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sl_bt_stack_init.h"/>
           <file name="sl_bt_types.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sl_bt_types.h"/>
           <file name="sl_bt_version.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sl_bt_version.h"/>
+        </folder>
+        <folder name="bgcommon">
+          <folder name="lib">
+            <file name="libbgcommon_efr32xg22_gcc_release.a" linked="false" uri="studio:/sdk/protocol/bluetooth/bgcommon/lib/libbgcommon_efr32xg22_gcc_release.a"/>
+          </folder>
         </folder>
         <folder name="bgstack">
           <folder name="ll">
@@ -827,16 +853,22 @@
   <file name="app.c" linked="false" uri="studio:/project/app.c"/>
   <file name="app.h" linked="false" uri="studio:/project/app.h"/>
   <file name="readme.md" linked="false" uri="studio:/project/readme.md"/>
+  <file name="create_bl_files.bat" generated="true" linked="false"/>
+  <file name="create_bl_files.sh" generated="true" linked="false"/>
+  <file name="create_bl_files.py" generated="true" linked="false"/>
   <file name="sl_gatt_service_device_information.c" generated="true" linked="false"/>
   <includePath uri="studio:/project/"/>
   <includePath uri="studio:/project/gecko_sdk_4.4.4/platform/Device/SiliconLabs/BGM22/Include"/>
   <includePath uri="studio:/project/gecko_sdk_4.4.4/app/common/util/app_assert"/>
   <includePath uri="studio:/project/gecko_sdk_4.4.4/app/common/util/app_log"/>
+  <includePath uri="studio:/project/gecko_sdk_4.4.4/app/common/util/app_timer"/>
+  <includePath uri="studio:/project/gecko_sdk_4.4.4/protocol/bluetooth/inc"/>
   <includePath uri="studio:/project/gecko_sdk_4.4.4/platform/common/inc"/>
   <includePath uri="studio:/project/gecko_sdk_4.4.4/protocol/bluetooth/bgcommon/inc"/>
-  <includePath uri="studio:/project/gecko_sdk_4.4.4/protocol/bluetooth/inc"/>
   <includePath uri="studio:/project/gecko_sdk_4.4.4/protocol/bluetooth/bgstack/ll/inc"/>
   <includePath uri="studio:/project/gecko_sdk_4.4.4/hardware/board/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.4.4/platform/bootloader"/>
+  <includePath uri="studio:/project/gecko_sdk_4.4.4/platform/bootloader/api"/>
   <includePath uri="studio:/project/gecko_sdk_4.4.4/platform/CMSIS/Core/Include"/>
   <includePath uri="studio:/project/gecko_sdk_4.4.4/hardware/driver/configuration_over_swo/inc"/>
   <includePath uri="studio:/project/gecko_sdk_4.4.4/platform/security/sl_component/sl_cryptoacc_library/include"/>
@@ -848,6 +880,7 @@
   <includePath uri="studio:/project/gecko_sdk_4.4.4/platform/emlib/inc"/>
   <includePath uri="studio:/project/gecko_sdk_4.4.4/platform/radio/rail_lib/plugin/fem_util"/>
   <includePath uri="studio:/project/gecko_sdk_4.4.4/app/bluetooth/common/gatt_service_device_information"/>
+  <includePath uri="studio:/project/gecko_sdk_4.4.4/app/bluetooth/common/in_place_ota_dfu"/>
   <includePath uri="studio:/project/gecko_sdk_4.4.4/platform/service/iostream/inc"/>
   <includePath uri="studio:/project/gecko_sdk_4.4.4/platform/security/sl_component/sl_mbedtls_support/config"/>
   <includePath uri="studio:/project/gecko_sdk_4.4.4/platform/security/sl_component/sl_mbedtls_support/config/preset"/>
@@ -879,6 +912,8 @@
   <includePath uri="studio:/project/gecko_sdk_4.4.4/platform/security/sl_component/sl_protocol_crypto/src"/>
   <includePath uri="studio:/project/gecko_sdk_4.4.4/platform/service/udelay/inc"/>
   <macroDefinition name="BGM220PC22HNA"/>
+  <macroDefinition name="SL_APP_PROPERTIES"/>
+  <macroDefinition name="BOOTLOADER_APPLOADER" value="1"/>
   <macroDefinition name="SL_BOARD_NAME" value="&quot;BRD4001A&quot;"/>
   <macroDefinition name="SL_BOARD_REV" value="&quot;A02&quot;"/>
   <macroDefinition name="HARDWARE_BOARD_DEFAULT_RF_BAND_2400"/>
