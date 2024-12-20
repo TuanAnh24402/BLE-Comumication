@@ -79,7 +79,9 @@ app.o: ../app.c \
  D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\protocol\bluetooth\inc/sl_bt_api.h \
  D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\protocol\bluetooth\inc/sl_bgapi.h \
  D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\protocol\bluetooth\inc/sl_bt_api_compatibility.h \
- ../app.h
+ ../app.h \
+ D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\autogen/gatt_db.h \
+ D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\protocol\bluetooth\inc/sli_bt_gattdb_def.h
 D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\platform\common\toolchain\inc/sl_gcc_preinclude.h:
 D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\platform\emlib\inc/em_common.h:
 D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\platform\Device\SiliconLabs\BGM22\Include/em_device.h:
@@ -161,3 +163,5 @@ D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\protoc
 D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\protocol\bluetooth\inc/sl_bgapi.h:
 D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\protocol\bluetooth\inc/sl_bt_api_compatibility.h:
 ../app.h:
+D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\autogen/gatt_db.h:
+D:\Code\OJT_code\BLE-Comumication\Ble\ peripheral\ device\gecko_sdk_4.4.4\protocol\bluetooth\inc/sli_bt_gattdb_def.h:

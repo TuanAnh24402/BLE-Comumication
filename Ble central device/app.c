@@ -70,6 +70,7 @@ static const uint8_t service_uuid[2] = {0xFF, 0x00};
 static uint32_t service_handle = 0;
 static uint16_t characteristic_handle[2];
 
+
 static void print_bluetooth_address(void);
 static bd_addr *read_and_cache_bluetooth_address(uint8_t *address_type_out);
 void string_handle(char *input_str);
@@ -171,16 +172,19 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
 //            state = opening;
             break;
           } else if (strcmp(name, TARGET_NAME_2) == 0) {
-            app_log("Found server 2, connecting..\n");
-            // Initiate connection
-            sl_bt_scanner_stop(); // Stop scanning
-            sl_bt_connection_open(evt->data.evt_scanner_legacy_advertisement_report.address,
-                                  evt->data.evt_scanner_legacy_advertisement_report.address_type,
-                                  sl_bt_gap_phy_1m,
-                                  &conn[1].handle);
+              app_log("Found server 2, connecting..\n");
+              // Initiate connection
+              sl_bt_scanner_stop(); // Stop scanning
+              sl_bt_connection_open(evt->data.evt_scanner_legacy_advertisement_report.address,
+                                    evt->data.evt_scanner_legacy_advertisement_report.address_type,
+                                    sl_bt_gap_phy_1m,
+                                    &conn[1].handle);
 //            state = opening;
             break;
+          } else {
+              app_log("Not found server\n");
           }
+
         }
         i += length + 1;
       }
@@ -192,14 +196,12 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
 
     case sl_bt_evt_connection_opened_id:
       uint8_t current_connection = evt->data.evt_connection_opened.connection;
-      bd_addr connection_address = evt->data.evt_connection_opened.address;
 
       if (current_connection == conn[0].handle) {
-          bd_addr_to_string(&connection_address, conn[0].device.address, 18);
           app_log("Connected to server 1\n");
           live_connections++;
-      } else {
-          bd_addr_to_string(&connection_address, conn[1].device.address, 18);
+      }
+      if (current_connection == conn[1].handle) {
           app_log("Connected to server 2\n");
           live_connections++;
       }
@@ -213,19 +215,22 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
           state = scanning;
         } else {
           sl_bt_scanner_stop();
-          sc = sl_bt_gatt_discover_primary_services_by_uuid(conn[0].handle,
-                                                            sizeof(service_uuid),
-                                                            (const uint8_t*) service_uuid);
-          if (sc == SL_STATUS_INVALID_HANDLE) {
-            // Failed to open connection, res-tart scanning
-            app_log_warning("Primary service discovery failed with invalid handle, dropping client\n");
-            sc = sl_bt_scanner_start(sl_bt_gap_phy_1m, sl_bt_scanner_discover_generic);
-            app_assert_status(sc);
-            state = scanning;
-            break;
-          } else {
-            app_assert_status(sc);
+          for (int i = 0; i < live_connections; i++) {
+            sc = sl_bt_gatt_discover_primary_services_by_uuid(conn[i].handle,
+                                                              sizeof(service_uuid),
+                                                              (const uint8_t*) service_uuid);
+            if (sc == SL_STATUS_INVALID_HANDLE) {
+              // Failed to open connection, res-tart scanning
+              app_log_warning("Primary service discovery failed with invalid handle, dropping client\n");
+              sc = sl_bt_scanner_start(sl_bt_gap_phy_1m, sl_bt_scanner_discover_generic);
+              app_assert_status(sc);
+              state = scanning;
+              break;
+            } else {
+              app_assert_status(sc);
+            }
           }
+
           state = discover_services;
         }
       }
@@ -255,10 +260,11 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
 
     // -------------------------------
     // This event is generated when a new characteristic is discovered
-    case sl_bt_evt_gatt_characteristic_id:
+    case sl_bt_evt_gatt_characteristic_id: {
       uint16_t handle = evt->data.evt_gatt_characteristic.characteristic;
       const uint8_t *uuid_char = evt->data.evt_gatt_characteristic.uuid.data;
       size_t uuid_char_len = evt->data.evt_gatt_characteristic.uuid.len;
+      uint8_t connection = evt->data.evt_gatt_characteristic.connection;
 
       if (uuid_char_len == 2) {
         uint16_t uuid16 = uuid_char[1] << 8 | uuid_char[0];
@@ -277,23 +283,76 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
             char output[50];
             sprintf(output, "Saved characteristic with UUID 0x%04x at index %d\n", uuid16, index);
             app_log(output);
+            state = discover_characteristics;
+
+            break;
         }
       }
-      break;
 
+      break;
+    }
+
+    case sl_bt_evt_gatt_characteristic_value_id: {
+      uint16_t characteristic = evt->data.evt_gatt_characteristic_value.characteristic;
+      uint8_t connection = evt->data.evt_gatt_characteristic_value.connection;
+      uint8array *received_value = &evt->data.evt_gatt_characteristic_value.value;
+
+
+      if (connection == conn[0].handle && characteristic == characteristic_handle[0]) {
+        app_log("LED state received value by server 1: %d\n", received_value->data[0]);
+        break;
+      }
+      else if (connection == conn[0].handle && characteristic == characteristic_handle[1]) {
+        app_log("FAN state received value by server 1: %d\n",received_value->data[0]);
+        break;
+      }
+      else if (connection == conn[1].handle && characteristic == characteristic_handle[0]) {
+        app_log("LED state received value by server 2: %d\n", received_value->data[0]);
+        break;
+      }
+      else if (connection == conn[1].handle && characteristic == characteristic_handle[1]) {
+        app_log("FAN state received value by server 2: %d\n", received_value->data[0]);
+        break;
+      }
+      else {
+        app_log("Received unknown characteristic value\n");
+      }
+      break;
+    }
     // -------------------------------
     // This event is generated for various procedure completions, e.g. when a
     // write procedure is completed, or service discovery is completed
-    case sl_bt_evt_gatt_procedure_completed_id:
-      uint16_t res = evt->data.evt_gatt_procedure_completed.connection;
-      uint8_t connection = evt->data.evt_gatt_procedure_completed.result;
+    case sl_bt_evt_gatt_procedure_completed_id: {
+      uint16_t res = evt->data.evt_gatt_procedure_completed.result;
+      uint8_t connection = evt->data.evt_gatt_procedure_completed.connection;
+
       if (state == discover_services) {
-        sc = sl_bt_gatt_discover_characteristics(conn[0].handle, service_handle);
-        app_assert_status(sc);
-        state = discover_characteristics;
-        break;
+        if (connection == conn[0].handle) {
+          sc = sl_bt_gatt_discover_characteristics(conn[0].handle, service_handle);
+          app_assert_status(sc);
+        }
+        if (connection == conn[1].handle) {
+          sc = sl_bt_gatt_discover_characteristics(conn[1].handle, service_handle);
+          app_assert_status(sc);
+        }
+
+      }
+      if (state == discover_characteristics) {
+//        if (connection == conn[0].handle) {
+//            sc = sl_bt_gatt_read_characteristic_value(conn[0].handle,characteristic_handle[0]);
+//            app_assert_status(sc);
+////            sc = sl_bt_gatt_read_characteristic_value(conn[0].handle,characteristic_handle[1]);
+////            app_assert_status(sc);
+//        }
+        for (uint8_t i = 0; i < live_connections; i++) {
+          sl_bt_gatt_read_characteristic_value(conn[i].handle, characteristic_handle[0]);
+          app_assert_status(sc);
+          sl_bt_gatt_read_characteristic_value(conn[i].handle, characteristic_handle[1]);
+          app_assert_status(sc);
+        }
       }
       break;
+    }
     // -------------------------------
     // This event indicates that a connection was closed.
     case sl_bt_evt_connection_closed_id:
@@ -316,6 +375,8 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
       }
 
       break;
+
+
 
     ///////////////////////////////////////////////////////////////////////////
     // Add additional event handlers here as your application requires!      //
@@ -403,7 +464,6 @@ void print_connections(uint8_t connection) {
             conn[connection].device.ble_status,
             conn[connection].data.led_status,
             conn[connection].data.fan_status);
-            //conn[connection].data.temp_value);
     app_log(output);
   }
 }

@@ -80,7 +80,7 @@
 
     <!--LED Control-->
     <characteristic const="false" id="led_control" name="LED Control" sourceId="" uuid="FF01">
-      <value length="0" type="hex" variable_length="false">00</value>
+      <value length="0" type="user" variable_length="false">00</value>
       <properties>
         <read authenticated="false" bonded="false" encrypted="false"/>
       </properties>
@@ -88,7 +88,7 @@
 
     <!--Fan control-->
     <characteristic const="false" id="fan_control" name="Fan control" sourceId="" uuid="FF02">
-      <value length="0" type="hex" variable_length="false">00</value>
+      <value length="0" type="user" variable_length="false">00</value>
       <properties>
         <read authenticated="false" bonded="false" encrypted="false"/>
       </properties>

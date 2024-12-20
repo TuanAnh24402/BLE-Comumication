@@ -31,6 +31,7 @@
 #include "app_assert.h"
 #include "sl_bluetooth.h"
 #include "app.h"
+#include "gatt_db.h"
 
 // The advertising set handle allocated from Bluetooth stack.
 static uint8_t advertising_set_handle = 0xff;
@@ -40,7 +41,7 @@ uint8_t handle;                            // Connection handle
 
 uint8_t adv_data[] = {
     0x02, 0x01, 0x06,
-    0x08, 0x08, 'S', 'e', 'r', 'v', 'e', 'r', '1',
+    0x08, 0x08, 'S', 'e', 'r', 'v', 'e', 'r', '2',
     0x03, 0x03, 0xFF, 0x00,
 };
 /**************************************************************************//**
@@ -123,7 +124,7 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
 
     // -------------------------------
     // This event indicates that a connection was closed.
-    case sl_bt_evt_connection_closed_id:
+    case sl_bt_evt_connection_closed_id: {
 
       uint8_t connection = evt->data.evt_connection_closed.connection;
       // Generate data for advertising
@@ -142,10 +143,44 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
 
       app_assert_status(sc);
       break;
+    }
 
-    case sl_bt_evt_gatt_server_attribute_value_id:
+    case sl_bt_evt_gatt_server_user_read_request_id: {
+      uint16_t attribute = evt->data.evt_gatt_server_user_read_request.characteristic;
+      uint8_t connection = evt->data.evt_gatt_server_user_read_request.connection;
+      uint16_t sent_len = 0;
+
+      if (attribute == gattdb_led_control) {
+        uint8_t data = 1;
+        uint16_t sent_len = 0;
+
+        sc = sl_bt_gatt_server_send_user_read_response(connection,
+                                                       attribute,
+                                                       0,
+                                                       1,
+                                                       &data,
+                                                       &sent_len);
+        app_assert_status(sc);
+        app_log("Data LED send %d\n", data);
+      }
+      else if (attribute == gattdb_fan_control) {
+        uint8_t data = 2;
+        sc = sl_bt_gatt_server_send_user_read_response(connection,
+                                                       attribute,
+                                                       0,
+                                                       1,
+                                                       &data,
+                                                       &sent_len);
+        app_assert_status(sc);
+        app_log("Data FAN send %d\n", data);
+      }
+      else {
+        app_log("Unknown characteristic read request\n");
+      }
 
       break;
+    }
+
     // -------------------------------
     // Default event handler.
     default:
