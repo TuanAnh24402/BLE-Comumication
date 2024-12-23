@@ -1,0 +1,21 @@
+#remove binaries file
+bootloader-apploader/GNU ARM v12.2.1 - Default/*.axf
+bootloader-apploader/GNU ARM v12.2.1 - Default/*.bin
+bootloader-apploader/GNU ARM v12.2.1 - Default/*.hex
+bootloader-apploader/GNU ARM v12.2.1 - Default/*.map
+bootloader-apploader/GNU ARM v12.2.1 - Default/*.out
+bootloader-apploader/GNU ARM v12.2.1 - Default/*.s37
+
+Ble peripheral device/GNU ARM v12.2.1 - Default/*.axf
+Ble peripheral device/GNU ARM v12.2.1 - Default/*.bin
+Ble peripheral device/GNU ARM v12.2.1 - Default/*.hex
+Ble peripheral device/GNU ARM v12.2.1 - Default/*.map
+Ble peripheral device/GNU ARM v12.2.1 - Default/*.out
+Ble peripheral device/GNU ARM v12.2.1 - Default/*.s37
+
+Ble central device/GNU ARM v12.2.1 - Default/*.axf
+Ble central device/GNU ARM v12.2.1 - Default/*.bin
+Ble central device/GNU ARM v12.2.1 - Default/*.hex
+Ble central device/GNU ARM v12.2.1 - Default/*.map
+Ble central device/GNU ARM v12.2.1 - Default/*.out
+Ble central device/GNU ARM v12.2.1 - Default/*.s37
