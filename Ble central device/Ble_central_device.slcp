@@ -31,6 +31,7 @@ component:
 - {id: app_assert}
 - {id: app_log}
 - {id: bluetooth_feature_connection}
+- {id: bluetooth_feature_extended_advertiser}
 - {id: bluetooth_feature_gatt}
 - {id: bluetooth_feature_gatt_server}
 - {id: bluetooth_feature_legacy_advertiser}
