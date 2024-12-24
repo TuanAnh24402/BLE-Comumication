@@ -33,33 +33,10 @@
 #include "app.h"
 #include <stdio.h>
 
-#define CONN_INTERVAL_MIN             80   //80ms
-#define CONN_INTERVAL_MAX             80   //80ms
-#define CONN_RESPONDER_LATENCY        0    //no latency
-#define CONN_TIMEOUT                  100  //100ms
-#define CONN_MIN_CE_LENGTH            0
-#define CONN_MAX_CE_LENGTH            0xffff
-
-#define SHORT_NAME_TYPE               0x08
-#define TARGET_NAME_1                 "Server1"
-#define TARGET_NAME_2                 "Server2"
-#define TARGET_NAME_3                 "Server3"
-
-
-#define LED_CONTROL                   0
-#define FAN_CONTROL                   1
-
-#define UUID_CHARACTERISTIC_LENGHT    2
-#define LED_CONTROL_UUID              0xff01
-#define FAN_CONTROL_UUID              0xff02
-
-#define MAX_CONNECTION                3
 
 // The advertising set handle allocated from Bluetooth stack.
 // Handle for the advertising set
 static uint8_t advertising_set_handle = 0xff;
-bd_addr address;                           // Bluetooth device address
-uint8_t address_type;
 
 // Variable characteristic
 static uint8_t led_state_1 = 0, fan_state_1 = 0;
@@ -70,8 +47,6 @@ static conn_state_t state;
 static sl_status_t sc;
 static uint8_t live_connections = 0;
 connection_info_t conn[MAX_CONNECTION];
-uint8_t current_connection_status;
-
 
 //Target service UUID
 static const uint8_t service_uuid[2] = {0xFF, 0x00};
@@ -84,9 +59,10 @@ bool check_characteristic = true;
 static void print_bluetooth_address(void);
 static bd_addr *read_and_cache_bluetooth_address(uint8_t *address_type_out);
 
-void update_advertising_data();
-void start_advertising();
-
+void sl_update_advertising_data();
+void sl_start_advertising();
+void sl_recieved_data(uint8_t connection, uint16_t characteristic, uint8array *received_value);
+void sl_read_data(uint8_t connection);
 /**************************************************************************//**
  * Application Init.
  *****************************************************************************/
@@ -123,7 +99,7 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
     // This event indicates the device has started and the radio is ready.
     // Do not call any stack command before receiving this boot event!
     case sl_bt_evt_system_boot_id:
-      start_advertising();
+      sl_start_advertising();
       char output[100];
       sprintf(output, "Bluetooth stack booted: v%d.%d.%d-b%d\n",
               evt->data.evt_system_boot.major,
@@ -248,7 +224,6 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
               app_assert_status(sc);
             }
           }
-
           state = discover_services;
         }
       }
@@ -300,11 +275,9 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
             sprintf(output, "Saved characteristic with UUID 0x%04x at index %d\n", uuid16, index);
             app_log(output);
             state = discover_characteristics;
-
             break;
         }
       }
-
       break;
     }
 
@@ -312,32 +285,12 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
       uint16_t characteristic = evt->data.evt_gatt_characteristic_value.characteristic;
       uint8_t connection = evt->data.evt_gatt_characteristic_value.connection;
       uint8array *received_value = &evt->data.evt_gatt_characteristic_value.value;
+      sl_recieved_data(connection, characteristic, received_value);
+      sl_update_advertising_data();
 
-
-      if (connection == conn[0].handle && characteristic == characteristic_handle[0]) {
-          app_log("LED state received value by server 1: %d\n", received_value->data[0]);
-          led_state_1 = received_value->data[0];
-      } else if (connection == conn[0].handle && characteristic == characteristic_handle[1]) {
-          app_log("FAN state received value by server 1: %d\n", received_value->data[0]);
-          fan_state_1 = received_value->data[0];
-      } else if (connection == conn[1].handle && characteristic == characteristic_handle[0]) {
-          app_log("LED state received value by server 2: %d\n", received_value->data[0]);
-          led_state_2 = received_value->data[0];
-      } else if (connection == conn[1].handle && characteristic == characteristic_handle[1]) {
-          app_log("FAN state received value by server 2: %d\n", received_value->data[0]);
-          fan_state_2 = received_value->data[0];
-      } else if (connection == conn[2].handle && characteristic == characteristic_handle[0]) {
-          app_log("LED state received value by server 3: %d\n", received_value->data[0]);
-          led_state_3 = received_value->data[0];
-      } else if (connection == conn[2].handle && characteristic == characteristic_handle[1]) {
-          app_log("FAN state received value by server 3: %d\n", received_value->data[0]);
-          fan_state_3 = received_value->data[0];
-      } else {
-          app_log("Received unknown characteristic value\n");
-      }
-//      update_advertising_data();
       break;
     }
+
     // -------------------------------
     // This event is generated for various procedure completions, e.g. when a
     // write procedure is completed, or service discovery is completed
@@ -357,33 +310,10 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
           sc = sl_bt_gatt_discover_characteristics(conn[2].handle, service_handle);
           app_assert_status(sc);
         }
-
       }
+
       if (state == discover_characteristics) {
-        if (connection == conn[0].handle && check_characteristic) {
-          check_characteristic = false;
-          sc = sl_bt_gatt_read_characteristic_value(conn[0].handle,characteristic_handle[0]);
-        }
-        else if (connection == conn[0].handle && check_characteristic == false) {
-          check_characteristic = true;
-          sc = sl_bt_gatt_read_characteristic_value(conn[0].handle,characteristic_handle[1]);
-        }
-        else if (connection == conn[1].handle && check_characteristic == true) {
-          check_characteristic = false;
-          sc = sl_bt_gatt_read_characteristic_value(conn[1].handle,characteristic_handle[0]);
-        }
-        else if (connection == conn[1].handle && check_characteristic == false) {
-          check_characteristic = true;
-          sc = sl_bt_gatt_read_characteristic_value(conn[1].handle,characteristic_handle[1]);
-        }
-        else if (connection == conn[2].handle && check_characteristic == true) {
-          check_characteristic = false;
-          sc = sl_bt_gatt_read_characteristic_value(conn[2].handle,characteristic_handle[0]);
-        }
-        else if (connection == conn[2].handle && check_characteristic == false) {
-          check_characteristic = true;
-          sc = sl_bt_gatt_read_characteristic_value(conn[2].handle,characteristic_handle[1]);
-        }
+        sl_read_data(connection);
       }
       break;
     }
@@ -410,10 +340,7 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
         app_assert_status(sc);
         state = scanning;
       }
-
       break;
-
-
 
     ///////////////////////////////////////////////////////////////////////////
     // Add additional event handlers here as your application requires!      //
@@ -425,7 +352,6 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
       break;
   }
 }
-
 
 /**************************************************************************//**
  * @brief
@@ -471,7 +397,7 @@ static void print_bluetooth_address(void)
   app_log(output);
 }
 
-void update_advertising_data() {
+void sl_update_advertising_data() {
     sl_status_t sc;
 
     uint8_t adv_data[] = {
@@ -508,7 +434,7 @@ void update_advertising_data() {
 }
 
 // Start advertises
-void start_advertising() {
+void sl_start_advertising() {
     sl_status_t sc;
 
     // Create an advertising set
@@ -516,5 +442,56 @@ void start_advertising() {
     app_assert_status(sc);
 
     // Update data advertises
-    update_advertising_data();
+    sl_update_advertising_data();
+}
+
+void sl_read_data(uint8_t connection) {
+  if (connection == conn[0].handle && check_characteristic) {
+    check_characteristic = false;
+    sc = sl_bt_gatt_read_characteristic_value(conn[0].handle,characteristic_handle[0]);
+  }
+  else if (connection == conn[0].handle && check_characteristic == false) {
+    check_characteristic = true;
+    sc = sl_bt_gatt_read_characteristic_value(conn[0].handle,characteristic_handle[1]);
+  }
+  else if (connection == conn[1].handle && check_characteristic == true) {
+    check_characteristic = false;
+    sc = sl_bt_gatt_read_characteristic_value(conn[1].handle,characteristic_handle[0]);
+  }
+  else if (connection == conn[1].handle && check_characteristic == false) {
+    check_characteristic = true;
+    sc = sl_bt_gatt_read_characteristic_value(conn[1].handle,characteristic_handle[1]);
+  }
+  else if (connection == conn[2].handle && check_characteristic == true) {
+    check_characteristic = false;
+    sc = sl_bt_gatt_read_characteristic_value(conn[2].handle,characteristic_handle[0]);
+  }
+  else if (connection == conn[2].handle && check_characteristic == false) {
+    check_characteristic = true;
+    sc = sl_bt_gatt_read_characteristic_value(conn[2].handle,characteristic_handle[1]);
+  }
+}
+
+void sl_recieved_data(uint8_t connection, uint16_t characteristic, uint8array *received_value) {
+  if (connection == conn[0].handle && characteristic == characteristic_handle[0]) {
+      app_log("LED state received value by server 1: %d\n", received_value->data[0]);
+      led_state_1 = received_value->data[0];
+  } else if (connection == conn[0].handle && characteristic == characteristic_handle[1]) {
+      app_log("FAN state received value by server 1: %d\n", received_value->data[0]);
+      fan_state_1 = received_value->data[0];
+  } else if (connection == conn[1].handle && characteristic == characteristic_handle[0]) {
+      app_log("LED state received value by server 2: %d\n", received_value->data[0]);
+      led_state_2 = received_value->data[0];
+  } else if (connection == conn[1].handle && characteristic == characteristic_handle[1]) {
+      app_log("FAN state received value by server 2: %d\n", received_value->data[0]);
+      fan_state_2 = received_value->data[0];
+  } else if (connection == conn[2].handle && characteristic == characteristic_handle[0]) {
+      app_log("LED state received value by server 3: %d\n", received_value->data[0]);
+      led_state_3 = received_value->data[0];
+  } else if (connection == conn[2].handle && characteristic == characteristic_handle[1]) {
+      app_log("FAN state received value by server 3: %d\n", received_value->data[0]);
+      fan_state_3 = received_value->data[0];
+  } else {
+      app_log("Received unknown characteristic value\n");
+  }
 }

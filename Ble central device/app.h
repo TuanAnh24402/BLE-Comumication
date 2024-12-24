@@ -31,8 +31,32 @@
 #ifndef APP_H
 #define APP_H
 
+
 #include <stdint.h>
 #include "sl_bluetooth.h"
+
+#define CONN_INTERVAL_MIN             80   //80ms
+#define CONN_INTERVAL_MAX             80   //80ms
+#define CONN_RESPONDER_LATENCY        0    //no latency
+#define CONN_TIMEOUT                  100  //100ms
+#define CONN_MIN_CE_LENGTH            0
+#define CONN_MAX_CE_LENGTH            0xffff
+
+#define SHORT_NAME_TYPE               0x08
+#define TARGET_NAME_1                 "Server1"
+#define TARGET_NAME_2                 "Server2"
+#define TARGET_NAME_3                 "Server3"
+
+
+#define LED_CONTROL                   0
+#define FAN_CONTROL                   1
+
+#define UUID_CHARACTERISTIC_LENGHT    2
+#define LED_CONTROL_UUID              0xff01
+#define FAN_CONTROL_UUID              0xff02
+
+#define MAX_CONNECTION                3
+
 
 typedef enum {
   scanning,
