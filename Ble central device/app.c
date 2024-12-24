@@ -33,7 +33,6 @@
 #include "app.h"
 #include <stdio.h>
 
-
 #define CONN_INTERVAL_MIN             80   //80ms
 #define CONN_INTERVAL_MAX             80   //80ms
 #define CONN_RESPONDER_LATENCY        0    //no latency
@@ -59,15 +58,17 @@
 // The advertising set handle allocated from Bluetooth stack.
 // Handle for the advertising set
 static uint8_t advertising_set_handle = 0xff;
+bd_addr address;                           // Bluetooth device address
+uint8_t address_type;
 
 // Variable characteristic
-uint8_t led_state_1 = 0, fan_state_1 = 0;
-uint8_t led_state_2 = 0, fan_state_2 = 0;
-uint8_t led_state_3 = 0, fan_state_3 = 0;
+static uint8_t led_state_1 = 0, fan_state_1 = 0;
+static uint8_t led_state_2 = 0, fan_state_2 = 0;
+static uint8_t led_state_3 = 0, fan_state_3 = 0;
 
 static conn_state_t state;
 static sl_status_t sc;
-uint8_t live_connections = 0;
+static uint8_t live_connections = 0;
 connection_info_t conn[MAX_CONNECTION];
 uint8_t current_connection_status;
 
@@ -82,10 +83,6 @@ bool check_characteristic = true;
 
 static void print_bluetooth_address(void);
 static bd_addr *read_and_cache_bluetooth_address(uint8_t *address_type_out);
-void string_handle(char *input_str);
-void print_connections(uint8_t connection);
-void bd_addr_to_string(const uint8_t *bd_addr, char *addr_str, size_t addr_str_len);
-void check_status(const char *context, sl_status_t sc);
 
 void update_advertising_data();
 void start_advertising();
@@ -142,7 +139,7 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
       sc = sl_bt_scanner_set_parameters(sl_bt_scanner_scan_mode_passive,  // passive scan
                                         scan_interval,
                                         scan_window);
-      check_status("Config scanner", sc);
+      app_assert_status(sc);
 
       // Set the default connection parameters for subsequent connections
        sc = sl_bt_connection_set_default_parameters(CONN_INTERVAL_MIN,
@@ -151,13 +148,12 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
                                                     CONN_TIMEOUT,
                                                     CONN_MIN_CE_LENGTH,
                                                     CONN_MAX_CE_LENGTH);
-      check_status("->", sc);
+      app_assert_status(sc);
       // Start scanning - looking for devices
       sc = sl_bt_scanner_start(sl_bt_scanner_scan_phy_1m,
                                 sl_bt_scanner_discover_generic);
-      check_status("Start discovery", sc);
+      app_assert_status(sc);
       state = scanning;
-
       break;
 
     case sl_bt_evt_scanner_legacy_advertisement_report_id:
@@ -180,7 +176,6 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
                                   evt->data.evt_scanner_legacy_advertisement_report.address_type,
                                   sl_bt_gap_phy_1m,
                                   &conn[0].handle);
-//            state = opening;
             break;
           } else if (strcmp(name, TARGET_NAME_2) == 0) {
               app_log("Found server 2, connecting..\n");
@@ -190,7 +185,6 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
                                     evt->data.evt_scanner_legacy_advertisement_report.address_type,
                                     sl_bt_gap_phy_1m,
                                     &conn[1].handle);
-//            state = opening;
             break;
           } else if (strcmp(name, TARGET_NAME_3) == 0) {
               app_log("Found server 3, connecting..\n");
@@ -200,7 +194,6 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
                                     evt->data.evt_scanner_legacy_advertisement_report.address_type,
                                     sl_bt_gap_phy_1m,
                                     &conn[2].handle);
-//            state = opening;
             break;
           }
           else {
@@ -213,9 +206,7 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
 
       break;
 
-    // -------------------------------
     // This event indicates that a new connection was opened.
-
     case sl_bt_evt_connection_opened_id:
       uint8_t current_connection = evt->data.evt_connection_opened.connection;
 
@@ -252,7 +243,8 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
               app_assert_status(sc);
               state = scanning;
               break;
-            } else {
+            }
+            else {
               app_assert_status(sc);
             }
           }
@@ -281,7 +273,6 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
       app_log("\n");
       app_log("Discovering characteristics...\n");
 
-//        state = discover_services;
       break;
 
     // -------------------------------
@@ -344,7 +335,7 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
       } else {
           app_log("Received unknown characteristic value\n");
       }
-      update_advertising_data();
+//      update_advertising_data();
       break;
     }
     // -------------------------------
@@ -416,7 +407,7 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
       // Keep scanning if connection less than 3
       if (live_connections < MAX_CONNECTION) {
         sc = sl_bt_scanner_start(sl_bt_scanner_scan_phy_1m, sl_bt_scanner_discover_generic);
-        check_status("Restarting discovery", sc);
+        app_assert_status(sc);
         state = scanning;
       }
 
@@ -434,26 +425,6 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
       break;
   }
 }
-
-
-void check_status(const char *context, sl_status_t sc) {
-  const char *default_context = "Operation";
-  const char *used_context = (context && context[0] != '\0') ? context : default_context;
-  char error_message[128];
-
-  if (sc != SL_STATUS_OK) {
-    snprintf(error_message, 128, "%s failed: 0x%X\n", used_context, (unsigned int)sc);
-    app_log(error_message);
-  } else {
-
-  }
-  memset(error_message, '\0', 128);
-}
-
-/***************************************************************************//**
- * App process string function.
- ******************************************************************************/
-
 
 
 /**************************************************************************//**
@@ -499,47 +470,25 @@ static void print_bluetooth_address(void)
           address->addr[0]);
   app_log(output);
 }
-// Print the status
-void print_connections(uint8_t connection) {
-  if (strlen(conn[connection].device.name) > 0) {
-    char output[150];
-    sprintf(output, "Status from connection %d:\n  Device name: %s\n  MAC Address: %s\n  BLE status : %d\n  LED1 status : %d\n  LED2 status : %d\n",
-            (connection + 1),
-            conn[connection].device.name,
-            conn[connection].device.address,
-            conn[connection].device.ble_status,
-            conn[connection].data.led_status,
-            conn[connection].data.fan_status);
-    app_log(output);
-  }
-}
 
-//Convert bd_addr to string
-void bd_addr_to_string(const uint8_t *bd_addr, char *addr_str, size_t addr_str_len) {
-    if (bd_addr == NULL || addr_str == NULL || addr_str_len < 18) {
-        // The string's length must be 18
-        return;
-    }
-
-    // Format any byte to "XX:XX:XX:XX:XX:XX"
-    snprintf(addr_str, addr_str_len, "%02X:%02X:%02X:%02X:%02X:%02X",
-             bd_addr[5], bd_addr[4], bd_addr[3], bd_addr[2], bd_addr[1], bd_addr[0]);
-}
 void update_advertising_data() {
     sl_status_t sc;
 
     uint8_t adv_data[] = {
-        0x02, 0x01, 0x06,               // Flags: 0x06 (General Discoverable Mode, BR/EDR Not Supported)
-        0x07, 0x09, 'L','1','0'+ led_state_1,'F','1','0'+ fan_state_2,
-        0x03, 0xFF, 0x02, 0x04                    // Length and Manufacturer Specific Data Type
+        0x02, 0x01, 0x06,                      // Flags: 0x06 (General Discoverable Mode, BR/EDR Not Supported)
+        0x07, 0x09, 'S','i','l','l','a','b',
+        0x0D, 0x08, 'L','e','d','1','=','0'+ led_state_1,'F','a','n','1','=','0'+ fan_state_1,
+        0x0D, 0x08, 'L','e','d','2','=','0'+ led_state_2,'F','a','n','2','=','0'+ fan_state_2,
+        0x0D, 0x08, 'L','e','d','3','=','0'+ led_state_3,'F','a','n','3','=','0'+ fan_state_3,
+        0x03, 0xFF, 0x02, 0x04                 // Length and Manufacturer Specific Data Type
 
     };
 
     // Set advertising data
-    sc = sl_bt_legacy_advertiser_set_data(advertising_set_handle,
-                                          0, // Advertising packet
-                                          sizeof(adv_data),
-                                          adv_data);
+    sc = sl_bt_extended_advertiser_set_phy(advertising_set_handle,
+                                           sl_bt_gap_1m_phy,
+                                           sl_bt_gap_2m_phy);
+    sc = sl_bt_extended_advertiser_set_data(advertising_set_handle, sizeof(adv_data), adv_data);
     app_assert_status(sc);
 
     // Set advertising parameters. Advertising interval is set to 100 ms.
@@ -552,8 +501,9 @@ void update_advertising_data() {
     app_assert_status(sc);
 
     // Start non-connectable advertising
-    sc = sl_bt_legacy_advertiser_start(advertising_set_handle,
-                                       sl_bt_legacy_advertiser_non_connectable);
+    sc = sl_bt_extended_advertiser_start(advertising_set_handle,
+                                         sl_bt_extended_advertiser_non_connectable,
+                                         0);
     app_assert_status(sc);
 }
 
